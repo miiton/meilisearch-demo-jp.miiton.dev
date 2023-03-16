@@ -2,23 +2,23 @@ services:
   meilisearch:
     image: getmeili/meilisearch:prototype-japanese-0
     ports:
-      - "7700:7700"
+      - '7700:7700'
     volumes:
-      - "./data:/data.ms"
+      - './data:/data.ms'
       # - "./snapshots:/snapshots"
     environment:
       MEILI_ENV: development
       MEILI_HTTP_ADDR: 0.0.0.0:7700
       MEILI_MASTER_KEY: hoge
       MEILI_NO_ANALYTICS: false
-      MEILI_LOG_LEVEL: DEBUG
+      MEILI_LOG_LEVEL: TRACE
       MEILI_MAX_INDEXING_MEMORY: 2Gb
       MEILI_MAX_INDEXING_THREADS: 2
-      MEILI_HTTP_PAYLOAD_SIZE_LIMIT: 20Mb
+      MEILI_HTTP_PAYLOAD_SIZE_LIMIT: 100Mb
       MEILI_SCHEDULE_SNAPSHOT: 86400
       MEILI_SNAPSHOT_DIR: /snapshots
       MEILI_DB_PATH: /data.ms
     logging:
       options:
-        max-size: "10k"
-        max-file: "5"
+        max-size: '10k'
+        max-file: '5'

@@ -4,10 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/gocarina/gocsv"
 )
 
@@ -16,6 +19,8 @@ type Date string
 func (d *Date) String() string {
 	return string(*d)
 }
+
+var client = http.DefaultClient
 
 func convertDateToTimestamp(date string) (*int64, error) {
 	if date == "" {
@@ -73,6 +78,9 @@ type MeiliDocument struct {
 	Category3                          string `csv:"category3:string" json:"category_3,omitempty"`
 	Country                            string `csv:"country:string" json:"country,omitempty"`
 	Age                                string `csv:"age:string" json:"age,omitempty"`
+	Year                               string `csv:"year:string" json:"year,omitempty"`
+	Explain                            string `csv:"explain:string" json:"explain,omitempty"`
+	Detail                             string `csv:"detail:string" json:"detail,omitempty"`
 	ImportantCulturalPropertyDate      string `csv:"important_cultural_property_date:string" json:"important_cultural_property_date,omitempty"`
 	ImportantCulturalPropertyTimestamp *int64 `csv:"important_cultural_property_timestamp:number" json:"important_cultural_property_timestamp,omitempty"`
 	NationalTreasureDate               string `csv:"national_treasure_date:string" json:"national_treasure_date,omitempty"`
@@ -102,6 +110,12 @@ func main() {
 	}
 
 	var documents []MeiliDocument
+	o, err := os.OpenFile("../tmp/converted.jsonl", os.O_WRONLY|os.O_CREATE|os.O_APPEND, os.ModePerm)
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+	defer o.Close()
 	for i := 0; i < len(items); i++ {
 		var d MeiliDocument
 		j, err := json.Marshal(items[i])
@@ -130,17 +144,77 @@ func main() {
 		d.Link = "https://kunishitei.bunka.go.jp/heritage/detail/" + d.LedgerID + "/" + d.ID
 		d.ChildID = items[i].ID
 		d.ID = fmt.Sprintf("%s-%s", d.LedgerID, d.ChildID)
-		documents = append(documents, d)
+		d.Year, d.Explain, d.Detail, err = ScrapeBunkaDetail(d.Link)
+		if err != nil {
+			d.Link = "https://kunishitei.bunka.go.jp/heritage/detail/" + d.LedgerID[0:1] + "1" + d.LedgerID[2:3] + "/" + d.ChildID
+			d.ChildID = items[i].ID
+			d.ID = fmt.Sprintf("%s-%s", d.LedgerID, d.ChildID)
+			d.Year, d.Explain, d.Detail, err = ScrapeBunkaDetail(d.Link)
+			if err != nil {
+				d.Link = "https://kunishitei.bunka.go.jp/heritage/detail/" + d.LedgerID[0:1] + "12" + "/" + d.ChildID
+				d.ChildID = items[i].ID
+				d.ID = fmt.Sprintf("%s-%s", d.LedgerID, d.ChildID)
+				d.Year, d.Explain, d.Detail, err = ScrapeBunkaDetail(d.Link)
+				if err != nil {
+					log.Printf("%05d error: %s %s\n", i+1, d.Link, err.Error())
+				}
+			}
+		}
+		jsonData, err := json.Marshal(d)
+		if err != nil {
+			log.Printf("%05d error: %s %s\n", i+1, d.Link, err.Error())
+		}
 
-	}
-	o, err := os.OpenFile("../tmp/converted.csv", os.O_WRONLY|os.O_CREATE, os.ModePerm)
-	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		o.WriteString(string(jsonData) + "\n")
+
+		// log.Printf("%05d done: %s\n", i+1, d.Link)
+		time.Sleep(250 * time.Millisecond)
 	}
 	err = gocsv.MarshalFile(documents, o)
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}
+}
+
+func ScrapeBunkaDetail(link string) (year, explain, detail string, err error) {
+	req, err := http.NewRequest("GET", link, nil)
+	if err != nil {
+		return "", "", "", err
+	}
+	res, err := client.Do(req)
+	if err != nil {
+		return "", "", "", err
+	}
+	defer res.Body.Close()
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	if res.ContentLength == 3393 {
+		return "", "", "", fmt.Errorf("no data")
+	}
+
+	// Find the review items
+	doc.Find(".heritage_detail_list tr").Each(func(i int, s *goquery.Selection) {
+		// For each item found, get the band and title
+		if strings.Contains(s.Text(), "写真一覧") {
+			return
+		}
+		key := strings.TrimSpace(s.Find("td:nth-child(1)").Text())
+		val := strings.TrimSpace(s.Find("td:nth-child(3)").Text())
+		if key != "西暦" {
+			year = val
+		}
+	})
+
+	doc.Find("#detail_explanation_m").Each(func(i int, s *goquery.Selection) {
+		explain = strings.TrimSpace(s.Find("tr:nth-child(2) td").Text())
+	})
+
+	doc.Find("#detail_explanation").Each(func(i int, s *goquery.Selection) {
+		detail = strings.TrimSpace(s.Find("tr:nth-child(2) td").Text())
+	})
+	return
 }

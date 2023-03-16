@@ -1,5 +1,6 @@
 /tmp/
 /data/
+docker-compose_prod.yml
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
