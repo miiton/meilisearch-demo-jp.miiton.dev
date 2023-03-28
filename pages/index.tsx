@@ -35,7 +35,7 @@ export default function Home() {
       <Head>
         <title>Meilisearch example in Japanese</title>
         <meta name="description" content="Example of Meilisearch in Japanese" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=1280, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="max-h-screen overflow-hidden">
