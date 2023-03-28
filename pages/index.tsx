@@ -96,7 +96,7 @@ export default function Home() {
                 />
               </div>
               <div className="p-4">
-                <div className="font-bold mb-2">重要文化財登録年(Registration Year)</div>
+                <div className="font-bold mb-2">重要文化財登録年(Registration year)</div>
                 <RangeInput
                   attribute="important_cultural_property_year"
                   min={0}
