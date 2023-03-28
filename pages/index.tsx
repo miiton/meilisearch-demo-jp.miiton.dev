@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
-import { InstantSearch, SearchBox, RefinementList, InfiniteHits, Highlight } from 'react-instantsearch-hooks-web'
+import {
+  InstantSearch,
+  SearchBox,
+  RefinementList,
+  InfiniteHits,
+  Highlight,
+  RangeInput,
+} from 'react-instantsearch-hooks-web'
 import { instantMeiliSearch, InstantMeiliSearchInstance } from '@meilisearch/instant-meilisearch'
 import { Stats } from '@/components/stats'
 import { ShowSettings } from '@/components/show-settings'
@@ -86,6 +93,21 @@ export default function Home() {
                     list: 'grid grid-cols-3 w-full',
                   }}
                   showMore={true}
+                />
+              </div>
+              <div className="p-4">
+                <div className="font-bold mb-2">重要文化財登録年(Registration Year)</div>
+                <RangeInput
+                  attribute="important_cultural_property_year"
+                  min={0}
+                  max={9999}
+                  classNames={{
+                    form: 'grid grid-cols-4',
+                    separator: 'text-center',
+                    inputMin: 'input input-sm input-bordered w-[100px] text-right',
+                    inputMax: 'input input-sm input-bordered w-[100px] text-right',
+                  }}
+                  translations={{ separatorElementText: '〜', submitButtonText: 'search' }}
                 />
               </div>
               <div className="p-4">
