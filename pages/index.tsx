@@ -3,6 +3,8 @@ import Head from 'next/head'
 import { InstantSearch, SearchBox, RefinementList, InfiniteHits, Highlight } from 'react-instantsearch-hooks-web'
 import { instantMeiliSearch, InstantMeiliSearchInstance } from '@meilisearch/instant-meilisearch'
 import { Stats } from '@/components/stats'
+import { ShowSettings } from '@/components/show-settings'
+import { ShowStats } from '@/components/show-stats'
 import dayjs from 'dayjs'
 
 export default function Home() {
@@ -40,18 +42,25 @@ export default function Home() {
               </a>
               <br />
               <span>The source of the data is the Agency for Cultural Affairs in Japan</span> <br />
-              <span>35,578 documents available</span>
             </p>
           </div>
-          <div className="font-mono p-4 text-sm">
-            [Meilisearch docker image]
-            <br />
-            getmeili/meilisearch:prototype-japanese-0
+          <div className="flex items-center">
+            <label htmlFor="settings" className="btn btn-sm btn-outline mx-2">
+              Show Settings
+            </label>
+            <label htmlFor="stats" className="btn btn-sm btn-outline mx-2">
+              Show Stats
+            </label>
+            <div className="font-mono p-4 text-sm">
+              [Meilisearch docker image]
+              <br />
+              getmeili/meilisearch:prototype-japanese-0
+            </div>
           </div>
         </header>
         <InstantSearch indexName="cultural-properties" searchClient={searchClient}>
           <div className="flex">
-            <div className="basis-[400px] shrink-0 overflow-y-scroll" style={{ height: 'calc(100vh - 80px)' }}>
+            <div className="basis-[440px] shrink-0 overflow-y-scroll" style={{ height: 'calc(100vh - 80px)' }}>
               <SearchBox
                 classNames={{
                   root: 'p-4',
@@ -63,7 +72,24 @@ export default function Home() {
                 placeholder="keyword"
               />
               <div className="p-4">
-                <div className="font-bold">文化財種類(Cultural property type)</div>
+                <div className="font-bold mb-2">都道府県(Prefecture)</div>
+                <RefinementList
+                  attribute="prefecture"
+                  showMoreLimit={47}
+                  classNames={{
+                    label: 'flex items-center',
+                    labelText: 'text-sm',
+                    checkbox: 'checkbox checkbox-xs rounded-sm mr-1',
+                    count: 'badge badge-sm badge-outline text-xs ml-1',
+                    showMore: 'text-sm btn btn-ghost btn-xs my-2',
+                    root: 'flex flex-col items-start',
+                    list: 'grid grid-cols-3 w-full',
+                  }}
+                  showMore={true}
+                />
+              </div>
+              <div className="p-4">
+                <div className="font-bold mb-2">文化財種類(Cultural property type)</div>
                 <RefinementList
                   attribute="category_1"
                   classNames={{
@@ -71,15 +97,15 @@ export default function Home() {
                     labelText: 'text-sm',
                     checkbox: 'checkbox checkbox-xs rounded-sm mr-1',
                     count: 'badge badge-sm badge-outline text-xs ml-1',
-                    showMore: 'text-sm btn btn-ghost btn-xs',
-                    root: 'flex flex-col items-center',
+                    showMore: 'text-sm btn btn-ghost btn-xs my-2',
+                    root: 'flex flex-col items-start',
                     list: 'w-full',
                   }}
                   showMore={true}
                 />
               </div>
               <div className="p-4">
-                <div className="font-bold">種別1(Categoty1)</div>
+                <div className="font-bold mb-2">種別1(Categoty1)</div>
                 <RefinementList
                   attribute="category_2"
                   classNames={{
@@ -87,15 +113,15 @@ export default function Home() {
                     labelText: 'text-sm',
                     checkbox: 'checkbox checkbox-xs rounded-sm mr-1',
                     count: 'badge badge-sm badge-outline text-xs ml-1',
-                    showMore: 'text-sm btn btn-ghost btn-xs',
-                    root: 'flex flex-col items-center',
-                    list: 'w-full',
+                    showMore: 'text-sm btn btn-ghost btn-xs my-2',
+                    root: 'flex flex-col items-start',
+                    list: 'grid grid-cols-2 w-full',
                   }}
                   showMore={true}
                 />
               </div>
               <div className="p-4">
-                <div className="font-bold">種別2(Category2)</div>
+                <div className="font-bold mb-2">種別2(Category2)</div>
                 <RefinementList
                   attribute="category_3"
                   classNames={{
@@ -103,15 +129,15 @@ export default function Home() {
                     labelText: 'text-sm',
                     checkbox: 'checkbox checkbox-xs rounded-sm mr-1',
                     count: 'badge badge-sm badge-outline text-xs ml-1',
-                    showMore: 'text-sm btn btn-ghost btn-xs',
-                    root: 'flex flex-col items-center',
-                    list: 'w-full',
+                    showMore: 'text-sm btn btn-ghost btn-xs my-2',
+                    root: 'flex flex-col items-start',
+                    list: 'grid grid-cols-2 w-full',
                   }}
                   showMore={true}
                 />
               </div>
               <div className="p-4">
-                <div className="font-bold">国(Country)</div>
+                <div className="font-bold mb-2">国(Country)</div>
                 <RefinementList
                   attribute="country"
                   classNames={{
@@ -119,15 +145,15 @@ export default function Home() {
                     labelText: 'text-sm',
                     checkbox: 'checkbox checkbox-xs rounded-sm mr-1',
                     count: 'badge badge-sm badge-outline text-xs ml-1',
-                    showMore: 'text-sm btn btn-ghost btn-xs',
-                    root: 'flex flex-col items-center',
-                    list: 'w-full',
+                    showMore: 'text-sm btn btn-ghost btn-xs my-2',
+                    root: 'flex flex-col items-start',
+                    list: 'grid grid-cols-2 w-full',
                   }}
                   showMore={true}
                 />
               </div>
               <div className="p-4">
-                <div className="font-bold">時代(Age)</div>
+                <div className="font-bold mb-2">時代(Age)</div>
                 <RefinementList
                   attribute="age"
                   classNames={{
@@ -135,9 +161,9 @@ export default function Home() {
                     labelText: 'text-sm',
                     checkbox: 'checkbox checkbox-xs rounded-sm mr-1',
                     count: 'badge badge-sm badge-outline text-xs ml-1',
-                    showMore: 'text-sm btn btn-ghost btn-xs',
-                    root: 'flex flex-col items-center',
-                    list: 'w-full',
+                    showMore: 'text-sm btn btn-ghost btn-xs my-2',
+                    root: 'flex flex-col items-start',
+                    list: 'grid grid-cols-2 w-full',
                   }}
                   showMore={true}
                 />
@@ -159,6 +185,8 @@ export default function Home() {
           </div>
         </InstantSearch>
       </main>
+      <ShowSettings />
+      <ShowStats />
     </>
   )
 }
@@ -209,7 +237,8 @@ const Hit = ({ hit }: any) => {
           {hit.administrator && hit.administrator !== null && (
             <Attribute label="管理者団体又は責任者" value={<Highlight attribute="administrator" hit={hit} />} />
           )}
-          {hit._geo && hit._geo !== null && <Attribute label="緯度経度" value={hit._geo} />}
+          {hit._geo.lat && hit._geo.lat !== '' && <Attribute label="緯度" value={hit._geo.lat} />}
+          {hit._geo.lng && hit._geo.lng !== '' && <Attribute label="経度" value={hit._geo.lng} />}
         </div>
       </div>
     </a>

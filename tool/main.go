@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/cheggaaa/pb"
 	"github.com/gocarina/gocsv"
 )
 
@@ -58,7 +59,7 @@ type CulturalProperty struct {
 	Age                           string `csv:"age:string" json:"age,omitempty"`
 	ImportantCulturalPropertyDate string `csv:"important_cultural_property_date:string" json:"important_cultural_property_date,omitempty"`
 	NationalTreasureDate          string `csv:"national_treasure_date:string" json:"national_treasure_date,omitempty"`
-	Prefecture                    string `csv:"prefecture:string" json:"prefecture,omitempty"`
+	Prefecture                    string `csv:"pref:string" json:"prefecture,omitempty"`
 	Address                       string `csv:"address:string" json:"address,omitempty"`
 	Storage                       string `csv:"storage:string" json:"storage,omitempty"`
 	Owner                         string `csv:"owner:string" json:"owner,omitempty"`
@@ -81,8 +82,10 @@ type MeiliDocument struct {
 	Year                               string `csv:"year:string" json:"year,omitempty"`
 	Explain                            string `csv:"explain:string" json:"explain,omitempty"`
 	Detail                             string `csv:"detail:string" json:"detail,omitempty"`
+	ImportantCulturalPropertyYear      string `csv:"important_cultural_property_year:string" json:"important_cultural_property_year,omitempty"`
 	ImportantCulturalPropertyDate      string `csv:"important_cultural_property_date:string" json:"important_cultural_property_date,omitempty"`
 	ImportantCulturalPropertyTimestamp *int64 `csv:"important_cultural_property_timestamp:number" json:"important_cultural_property_timestamp,omitempty"`
+	NationalTreasureYear               string `csv:"national_treasure_year:string" json:"national_treasure_year,omitempty"`
 	NationalTreasureDate               string `csv:"national_treasure_date:string" json:"national_treasure_date,omitempty"`
 	NationalTreasureTimestamp          *int64 `csv:"national_treasure_timestamp:number" json:"national_treasure_timestamp,omitempty"`
 	Prefecture                         string `csv:"prefecture:string" json:"prefecture,omitempty"`
@@ -90,8 +93,11 @@ type MeiliDocument struct {
 	Storage                            string `csv:"storage:string" json:"storage,omitempty"`
 	Owner                              string `csv:"owner:string" json:"owner,omitempty"`
 	Administrator                      string `csv:"administrator:string" json:"administrator,omitempty"`
-	GEO                                string `csv:"_geo:string" json:"geo,omitempty"`
-	Link                               string `csv:"link:string" json:"link,omitempty"`
+	GEO                                struct {
+		Lat string `json:"lat"`
+		Lng string `json:"lng"`
+	} `csv:"_geo:string" json:"_geo,omitempty"`
+	Link string `csv:"link:string" json:"link,omitempty"`
 }
 
 func main() {
@@ -116,7 +122,10 @@ func main() {
 		os.Exit(1)
 	}
 	defer o.Close()
+	bar := pb.StartNew(len(items))
+	defer bar.Finish()
 	for i := 0; i < len(items); i++ {
+		bar.Increment()
 		var d MeiliDocument
 		j, err := json.Marshal(items[i])
 		if err != nil {
@@ -129,12 +138,19 @@ func main() {
 			os.Exit(1)
 		}
 		if items[i].Latitude != "" && items[i].Longtitude != "" {
-			d.GEO = fmt.Sprintf("%s,%s", items[i].Latitude, items[i].Longtitude)
+			d.GEO.Lat = items[i].Latitude
+			d.GEO.Lng = items[i].Longtitude
+		}
+		if len(items[i].ImportantCulturalPropertyDate) == 8 {
+			d.ImportantCulturalPropertyYear = items[i].ImportantCulturalPropertyDate[:4]
 		}
 		d.ImportantCulturalPropertyTimestamp, err = convertDateToTimestamp(items[i].ImportantCulturalPropertyDate)
 		if err != nil {
 			log.Println(err)
 			os.Exit(1)
+		}
+		if len(items[i].NationalTreasureDate) == 8 {
+			d.NationalTreasureYear = items[i].NationalTreasureDate[:4]
 		}
 		d.NationalTreasureTimestamp, err = convertDateToTimestamp(items[i].NationalTreasureDate)
 		if err != nil {
