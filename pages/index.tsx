@@ -13,9 +13,11 @@ import { Stats } from '@/components/stats'
 import { ShowSettings } from '@/components/show-settings'
 import { ShowStats } from '@/components/show-stats'
 import dayjs from 'dayjs'
+import { Map } from '@/components/map'
 
 export default function Home() {
   const [searchClient, setSearchClient] = useState<InstantMeiliSearchInstance>()
+  const [map, setMap] = useState(<></>)
 
   useEffect(() => {
     const meiliEndpoint = process.env.NEXT_PUBLIC_MEILI_ENDPOINT
@@ -24,6 +26,7 @@ export default function Home() {
       const c = instantMeiliSearch(meiliEndpoint, meiliApiKey)
       setSearchClient(c)
     }
+    setMap(<Map />)
   }, [])
 
   if (!searchClient) {
@@ -191,18 +194,21 @@ export default function Home() {
                 />
               </div>
             </div>
-            <div className="grow overflow-y-scroll px-4" style={{ height: 'calc(100vh - 80px)' }}>
-              <Stats />
-              <InfiniteHits
-                hitComponent={Hit}
-                classNames={{
-                  root: 'w-full flex flex-col items-center',
-                  list: 'w-full',
-                  loadMore: 'btn btn-outline w-[200px] my-8',
-                }}
-                showPrevious={false}
-                translations={{ showMoreButtonText: 'Load More' }}
-              />
+            <div className="grow basis-1 flex flex-col" style={{ height: 'calc(100vh - 80px)' }}>
+              <div className="shrink-0 px-4 pb-4 w-full">{map}</div>
+              <div className="grow overflow-y-scroll px-4">
+                <Stats />
+                <InfiniteHits
+                  hitComponent={Hit}
+                  classNames={{
+                    root: 'w-full flex flex-col items-center',
+                    list: 'w-full',
+                    loadMore: 'btn btn-outline w-[200px] my-8',
+                  }}
+                  showPrevious={false}
+                  translations={{ showMoreButtonText: 'Load More' }}
+                />
+              </div>
             </div>
           </div>
         </InstantSearch>
