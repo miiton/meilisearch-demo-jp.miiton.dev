@@ -99,21 +99,6 @@ export default function Home() {
                 />
               </div>
               <div className="p-4">
-                <div className="font-bold mb-2">重要文化財登録年(Registration year)</div>
-                <RangeInput
-                  attribute="important_cultural_property_year"
-                  min={0}
-                  max={9999}
-                  classNames={{
-                    form: 'grid grid-cols-4',
-                    separator: 'text-center',
-                    inputMin: 'input input-sm input-bordered w-[100px] text-right',
-                    inputMax: 'input input-sm input-bordered w-[100px] text-right',
-                  }}
-                  translations={{ separatorElementText: '〜', submitButtonText: 'search' }}
-                />
-              </div>
-              <div className="p-4">
                 <div className="font-bold mb-2">文化財種類(Cultural property type)</div>
                 <RefinementList
                   attribute="category_1"
