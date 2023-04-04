@@ -6,7 +6,7 @@ import {
   RefinementList,
   InfiniteHits,
   Highlight,
-  RangeInput,
+  HitsPerPage,
 } from 'react-instantsearch-hooks-web'
 import { instantMeiliSearch, InstantMeiliSearchInstance } from '@meilisearch/instant-meilisearch'
 import { Stats } from '@/components/stats'
@@ -36,8 +36,8 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Meilisearch example in Japanese</title>
-        <meta name="description" content="Example of Meilisearch in Japanese" />
+        <title>MeiliSearch example in Japanese</title>
+        <meta name="description" content="Example of MeiliSearch in Japanese" />
         <meta name="viewport" content="width=1280, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -182,7 +182,19 @@ export default function Home() {
             <div className="grow basis-1 flex flex-col" style={{ height: 'calc(100vh - 80px)' }}>
               <div className="shrink-0 px-4 pb-4 w-full">{map}</div>
               <div className="grow overflow-y-scroll px-4">
-                <Stats />
+                <div className="flex justify-start items-center">
+                  <HitsPerPage
+                    items={[
+                      { label: '20 hits per page', value: 20, default: true },
+                      { label: '50 hits per page', value: 50 },
+                      { label: '100 hits per page', value: 100 },
+                      { label: '200 hits per page', value: 200 },
+                      { label: '500 hits per page', value: 500 },
+                    ]}
+                    classNames={{ select: 'select select-bordered select-sm bg-white', root: 'py-1' }}
+                  />
+                  <Stats />
+                </div>
                 <InfiniteHits
                   hitComponent={Hit}
                   classNames={{
