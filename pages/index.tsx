@@ -14,6 +14,7 @@ import { ShowSettings } from '@/components/show-settings'
 import { ShowStats } from '@/components/show-stats'
 import dayjs from 'dayjs'
 import { Map } from '@/components/map'
+import { Geosearch } from '@/components/geosearch'
 
 export default function Home() {
   const [searchClient, setSearchClient] = useState<InstantMeiliSearchInstance>()
@@ -40,6 +41,7 @@ export default function Home() {
         <meta name="description" content="Example of MeiliSearch in Japanese" />
         <meta name="viewport" content="width=1280, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="author" href="http://www.hatena.ne.jp/miiton/" />
       </Head>
       <main className="max-h-screen overflow-hidden">
         <header className="flex items-start justify-between shadow-sm h-[80px]">
@@ -71,16 +73,19 @@ export default function Home() {
         <InstantSearch indexName="cultural-properties" searchClient={searchClient}>
           <div className="flex">
             <div className="basis-[440px] shrink-0 overflow-y-scroll" style={{ height: 'calc(100vh - 80px)' }}>
-              <SearchBox
-                classNames={{
-                  root: 'p-4',
-                  input: 'input input-bordered w-full',
-                  submitIcon: 'hidden',
-                  resetIcon: 'hidden',
-                  loadingIcon: 'hidden',
-                }}
-                placeholder="keyword"
-              />
+              <div className="p-4">
+                <div className="font-bold mb-2">キーワード(Keyword)</div>
+                <SearchBox
+                  classNames={{
+                    input: 'input input-bordered w-full',
+                    submitIcon: 'hidden',
+                    resetIcon: 'hidden',
+                    loadingIcon: 'hidden',
+                  }}
+                  placeholder="keyword"
+                />
+              </div>
+              {/* <Geosearch /> */}
               <div className="p-4">
                 <div className="font-bold mb-2">都道府県(Prefecture)</div>
                 <RefinementList
