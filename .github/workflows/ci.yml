@@ -38,5 +38,5 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VERSION=${{  github.ref_name }}
-            NEXT_PUBLIC_MEILI_ENDPOINT=https://meili.meilisearch-example-jp.miiton.dev/
+            NEXT_PUBLIC_MEILI_ENDPOINT=https://meili-meilisearch-example-jp.miiton.dev/
             NEXT_PUBLIC_MEILI_API_KEY=6288cbfc0052e7ae4e639bbd7b0ec8d556c6f4801116bddb5f115ef94f88534a
