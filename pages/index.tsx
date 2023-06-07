@@ -66,7 +66,7 @@ export default function Home() {
             <div className="font-mono p-4 text-sm">
               [Meilisearch docker image]
               <br />
-              getmeili/meilisearch:prototype-japanese-1
+              miiton/meilisearch-force-jp:v1.2.0
             </div>
           </div>
         </header>
