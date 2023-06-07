@@ -32,7 +32,10 @@ const Map = () => {
       hits
         .filter((hit) => {
           const item = hit as unknown as any
-          return item._geo.lat !== '' && item._geo.lng !== ''
+          if (item._geo) {
+            return item._geo.lat !== '' && item._geo.lng !== ''
+          }
+          return false
         })
         .map((hit) => {
           const item = hit as unknown as Toriaezu
@@ -52,15 +55,23 @@ const Map = () => {
         attribution='&copy; <a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a>'
         url="https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png"
       />
-      {hits.map((hit) => {
-        const item = hit as unknown as Toriaezu
-        const pos = new LatLng(item._geo.lat, item._geo.lng)
-        return (
-          <Marker key={item.id} position={pos}>
-            <Popup>{item.name}</Popup>
-          </Marker>
-        )
-      })}
+      {hits
+        .filter((hit) => {
+          const item = hit as unknown as Toriaezu
+          if (item._geo) {
+            return true
+          }
+          return false
+        })
+        .map((hit) => {
+          const item = hit as unknown as Toriaezu
+          const pos = new LatLng(item._geo.lat, item._geo.lng)
+          return (
+            <Marker key={item.id} position={pos}>
+              <Popup>{item.name}</Popup>
+            </Marker>
+          )
+        })}
     </>
   )
 }

@@ -14,7 +14,6 @@ import { ShowSettings } from '@/components/show-settings'
 import { ShowStats } from '@/components/show-stats'
 import dayjs from 'dayjs'
 import { Map } from '@/components/map'
-import { Geosearch } from '@/components/geosearch'
 
 export default function Home() {
   const [searchClient, setSearchClient] = useState<InstantMeiliSearchInstance>()
@@ -24,7 +23,7 @@ export default function Home() {
     const meiliEndpoint = process.env.NEXT_PUBLIC_MEILI_ENDPOINT
     const meiliApiKey = process.env.NEXT_PUBLIC_MEILI_API_KEY
     if (meiliEndpoint && meiliApiKey) {
-      const c = instantMeiliSearch(meiliEndpoint, meiliApiKey)
+      const c = instantMeiliSearch(meiliEndpoint, meiliApiKey, { primaryKey: 'id' })
       setSearchClient(c)
     }
     setMap(<Map />)
@@ -267,8 +266,12 @@ const Hit = ({ hit }: any) => {
           {hit.administrator && hit.administrator !== null && (
             <Attribute label="管理者団体又は責任者" value={<Highlight attribute="administrator" hit={hit} />} />
           )}
-          {hit._geo.lat && hit._geo.lat !== '' && <Attribute label="緯度" value={hit._geo.lat} />}
-          {hit._geo.lng && hit._geo.lng !== '' && <Attribute label="経度" value={hit._geo.lng} />}
+          {hit._geo && (
+            <>
+              {hit._geo.lat && hit._geo.lat !== '' && <Attribute label="緯度" value={hit._geo.lat} />}
+              {hit._geo.lng && hit._geo.lng !== '' && <Attribute label="経度" value={hit._geo.lng} />}
+            </>
+          )}
         </div>
       </div>
     </a>
