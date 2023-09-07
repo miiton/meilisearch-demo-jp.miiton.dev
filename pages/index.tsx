@@ -65,7 +65,9 @@ export default function Home() {
             <div className="font-mono p-4 text-sm">
               [Meilisearch docker image]
               <br />
-              <a href="https://hub.docker.com/r/miiton/meilisearch-force-jp">miiton/meilisearch-force-jp:v1.2.0</a>
+              <a href="https://hub.docker.com/layers/getmeili/meilisearch/prototype-japanese-5/images/sha256-b99d0b2d80d3c22e5ae96e1a85c21e98e926a3469c9fd69f9c71f91e2f45b609?context=explore">
+                getmeili/meilisearch:prototype-japanese-5
+              </a>
             </div>
           </div>
         </header>
@@ -90,6 +92,7 @@ export default function Home() {
                 <RefinementList
                   attribute="prefecture"
                   showMoreLimit={47}
+                  searchable={true}
                   classNames={{
                     label: 'flex items-center',
                     labelText: 'text-sm',
@@ -98,6 +101,7 @@ export default function Home() {
                     showMore: 'text-sm btn btn-ghost btn-xs my-2',
                     root: 'flex flex-col items-start',
                     list: 'grid grid-cols-3 w-full',
+                    searchBox: 'refinementlist-search-box',
                   }}
                   showMore={true}
                 />

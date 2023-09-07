@@ -1,23 +1,28 @@
 services:
   meilisearch:
-    image: miiton/meilisearch-force-jp:v1.2.0
+    image: getmeili/meilisearch:prototype-japanese-5
     ports:
       - '7700:7700'
     volumes:
       - './data:/data.ms'
+      - './dump:/dump'
       # - "./snapshots:/snapshots"
     environment:
       MEILI_ENV: development
       MEILI_HTTP_ADDR: 0.0.0.0:7700
       MEILI_MASTER_KEY: hoge
       MEILI_NO_ANALYTICS: false
-      MEILI_LOG_LEVEL: TRACE
+      MEILI_LOG_LEVEL: WARN
       MEILI_MAX_INDEXING_MEMORY: 2Gb
       MEILI_MAX_INDEXING_THREADS: 2
       MEILI_HTTP_PAYLOAD_SIZE_LIMIT: 100Mb
       MEILI_SCHEDULE_SNAPSHOT: 86400
       MEILI_SNAPSHOT_DIR: /snapshots
       MEILI_DB_PATH: /data.ms
+      MEILI_DUMP_DIR: /dump
+      MEILI_IMPORT_DUMP: /dump/20230802-233540899.dump
+      MEILI_IGNORE_MISSING_DUMP: false
+      MEILI_IGNORE_DUMP_IF_DB_EXISTS: true
     logging:
       options:
         max-size: '10k'
